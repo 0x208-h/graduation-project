@@ -10,7 +10,7 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <Counter />
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Edit <code className="text-xs hover:bg-red-900">src/App.tsx</code> and save to reload.
         </p>
         <span>
           <span>Learn </span>
