@@ -69,6 +69,7 @@ const swSrc = paths.swSrc;
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
+const lessRegex = /\.less$/;
 const sassRegex = /\.(scss|sass)$/;
 const sassModuleRegex = /\.module\.(scss|sass)$/;
 
@@ -105,7 +106,7 @@ module.exports = function (webpackEnv) {
   const shouldUseReactRefresh = env.raw.FAST_REFRESH;
 
   // common function to get style loaders
-  const getStyleLoaders = (cssOptions, preProcessor) => {
+  const getStyleLoaders = (cssOptions, preProcessor, preOptions) => {
     const loaders = [
       isEnvDevelopment && require.resolve('style-loader'),
       isEnvProduction && {
@@ -179,6 +180,7 @@ module.exports = function (webpackEnv) {
           loader: require.resolve(preProcessor),
           options: {
             sourceMap: true,
+            ...preOptions
           },
         }
       );
@@ -419,6 +421,14 @@ module.exports = function (webpackEnv) {
                 ],
                 
                 plugins: [
+                  [
+                    require.resolve("babel-plugin-import"),
+                    {
+                      libraryName: 'antd',
+                      libraryDirectory: 'lib',
+                      style: true,
+                    }
+                  ],
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
                     require.resolve('react-refresh/babel'),
@@ -497,6 +507,17 @@ module.exports = function (webpackEnv) {
                   mode: 'local',
                   getLocalIdent: getCSSModuleLocalIdent,
                 },
+              }),
+            },
+            {
+              test: lessRegex,
+              use: getStyleLoaders({
+                importLoaders: 3,
+                sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+              }, "less-loader", {
+                lessOptions: {
+                  javascriptEnabled: true,
+                }
               }),
             },
             // Opt-in support for SASS (using .scss or .sass extensions).
