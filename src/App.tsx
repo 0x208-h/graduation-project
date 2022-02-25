@@ -1,17 +1,23 @@
-import React from 'react';
-import { Button, DatePicker, Input } from 'antd'
-import './App.css';
+import React, { Suspense } from "react";
+import { BrowserRouter } from "react-router-dom";
+import "./App.css";
+import Router from "./route";
+
 
 function App() {
   return (
     <div className="App">
-      <Button type="primary" className=" m-3 p-4">Primary Button</Button>
-      < DatePicker />
-      <Input.Search enterButton />
-      <Button className=" bg-purple-300"> primary</Button>
-      {/* <Button className=" bg-test"> test</Button> */}
-      <Button className=" hover:bg-sky-800">Test</Button>
-      <div className=" underline">22222</div>
+      <BrowserRouter>
+        <Suspense fallback={null}>
+          <Router />
+          {/* <Routes>
+              <Route>
+                <Route path="/" element={<Login />} />
+                <Route path="/login"  element={<Login />}/>
+              </Route>
+            </Routes> */}
+        </Suspense>
+      </BrowserRouter>
     </div>
   );
 }
