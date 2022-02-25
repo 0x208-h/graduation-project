@@ -1,0 +1,23 @@
+.container {
+  height: 100%;
+  background: #2b4b6b;
+  .loginBox {
+    width: 450px;
+    height: 300px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 4px;
+    .formContainer {
+      width: 75%;
+      .submitBtn {
+        margin:0 60px 0 0;
+      }
+    }
+  }
+}
