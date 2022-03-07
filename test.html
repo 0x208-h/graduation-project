@@ -1,14 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <script>
-    
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      window.x = 0;
+      let x = 1;
+
+      class T {
+        xx = 2;
+        x = 2;
+        constructor() {
+          this.x = 3;
+        }
+        run = () => {
+          console.log(this.x); // run T
+        };
+        func() {
+          console.log(this.x); // func T
+        }
+      }
+
+      T.prototype.run = () => {
+        console.log(this.x); // outer run
+      };
+
+      T.prototype.func = () => {
+        console.log(this.x); // outer func
+      };
+
+      const t = new T();
+      t.run();
+      t.func();
+      console.log(t)
+    </script>
+  </body>
 </html>

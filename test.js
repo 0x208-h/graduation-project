@@ -272,3 +272,107 @@ function throttle(fn) {
     }, 500);
   };
 }
+
+function Person(name) {
+  this.name = name;
+  this.getName = function() {
+    console.log(this.name)
+  }
+}
+
+const p1 = new Person();
+
+console.log(p1.constructor === Person)
+console.log(Person.prototype.constructor === Person)
+
+function Parent (name) {
+  this.name = name;
+  this.colors = ['red', 'blue', 'green'];
+}
+
+Parent.prototype.getName = function () {
+  console.log(this.name)
+}
+
+function Child (name, age) {
+  Parent.call(this, name);
+  this.age = age;
+}
+
+
+function object(o) {
+  function F() {}
+  F.prototype = o;
+  console.log( new F(), 'F')
+  return new F();
+}
+
+function prototype(child, parent) {
+  var prototype = object(parent.prototype);
+  console.log(prototype, 'p')
+  prototype.constructor = child;
+  child.prototype = prototype;
+}
+
+// 当我们使用的时候：
+prototype(Child, Parent);
+
+var child1 = new Child('kevin', '18');
+
+console.log(child1);
+
+
+a = 10
+const obj = {
+  a: 13,
+  b: () => {
+    console.log(this.a, this)
+  },
+  c: function () {
+    console.log(this.a, this)
+  },
+  d: function () {
+    return () => {
+      console.log(this.a, this)
+    }
+  },
+  e: function () {
+    return this.b
+  }
+}
+
+console.log(this, a, 'global')
+obj.b()
+obj.c()
+obj.d()();
+obj.e()();
+
+
+global.x = 0
+let x = 1
+
+class T {
+  xx = 2;
+  x = 2;
+  constructor(){
+    this.x = 3;
+  }
+  run = () => {
+    console.log(this.x) // run T
+  }
+  func(){
+    console.log(this.x) // func T
+  }
+}
+
+T.prototype.run = () => {
+  console.log(this.x) // outer run
+}
+
+T.prototype.func = () => {
+  console.log(this.x) // outer func
+}
+
+const t = new T();
+t.run();
+t.func();

@@ -7,9 +7,9 @@ import Router from "./route";
 // const Login = lazy(
 //   () => import(/*WebpackChunkName: Login */ "@/components/Login")
 // );
-// // const Home = lazy(
-// //   () => import(/*WebpackChunkName: Home */ "@/components/Home")
-// // );
+// const Home = lazy(
+//   () => import(/*WebpackChunkName: Home */ "@/components/Home")
+// );
 // const Users = lazy(
 //   () => import(/*WebpackChunkName: Users */ "@/components/Users")
 // );
@@ -22,15 +22,15 @@ function App() {
     <div className="App">
       <BrowserRouter>
          {/* <Suspense fallback={null}> */}
-          <Router />
+          <Router /> 
           {/* <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/home" element={<Home />}>
               <Route path="good" element={<Goods />} />
               <Route path="user" element={<Users />} />
             </Route>
-          </Routes>
-        </Suspense> */}
+          </Routes> */}
+        {/* </Suspense> */}
       </BrowserRouter>
     </div>
   );

@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom"
 import { Form, Input, Button } from "antd";
 import styles from "./index.module.scss";
 const Login = () => {
+  const navigate = useNavigate()
   return (
     <div className={styles.container}>
       <div className={styles.loginBox}>
@@ -25,7 +27,7 @@ const Login = () => {
             <Input.Password />
           </Form.Item>
           <Form.Item wrapperCol={{ offset: 6, span: 18 }} className={styles.btns}>
-            <Button type="primary" htmlType="submit" className={styles.submitBtn}>
+            <Button type="primary" htmlType="submit" onClick={() => navigate('/home')} className={styles.submitBtn}>
               登陆
             </Button>
             <Button type="default" htmlType="reset">

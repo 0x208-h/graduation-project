@@ -1,32 +1,47 @@
-import React, { useState } from "react";
-import { Link, Outlet } from 'react-router-dom'
-import { Layout, Menu, Breadcrumb } from "antd";
+import React, { useRef, useState } from "react";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { Layout, Menu } from "antd";
 import {
   DesktopOutlined,
   PieChartOutlined,
   FileOutlined,
-  TeamOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
-import styles from './index.module.scss'
+import styles from "./index.module.scss";
 
 const { Header, Content, Footer, Sider } = Layout;
-const { SubMenu } = Menu;
 
 const Home = () => {
+  const location = useLocation();
+  const keys = useRef<string[]>([sessionStorage.getItem("activePath") || "/"]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const onCollapse = () => setCollapsed(!collapsed);
+  console.log(location, sessionStorage.getItem("activePath"));
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Sider collapsible collapsed={collapsed} onCollapse={onCollapse} className={styles.container}>
+      <Sider
+        collapsible
+        collapsed={collapsed}
+        onCollapse={onCollapse}
+        className={styles.container}
+      >
         <div className={styles.logo} />
-        <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-          <Menu.Item key="1" icon={<PieChartOutlined />}>
-          <Link to="user">用户管理</Link>
-            
+        <Menu
+          theme="dark"
+          defaultSelectedKeys={keys.current}
+          mode="inline"
+          onSelect={({ keyPath }) =>
+            sessionStorage.setItem("activePath", keyPath[0])
+          }
+        >
+          <Menu.Item key="/" icon={<PieChartOutlined />}>
+            <Link to="">首页</Link>
           </Menu.Item>
-          <Menu.Item key="2" icon={<DesktopOutlined />}>
+          <Menu.Item key="user" icon={<PieChartOutlined />}>
+            <Link to="user">用户管理</Link>
+          </Menu.Item>
+          <Menu.Item key="good" icon={<DesktopOutlined />}>
             <Link to="good">商品管理</Link>
           </Menu.Item>
           <Menu.Item key="9" icon={<FileOutlined />}>
@@ -37,15 +52,11 @@ const Home = () => {
       <Layout className={styles.siteLayout}>
         <Header className={styles.siteLayoutBackground} />
         <Content style={{ margin: "0 16px" }}>
-          <Breadcrumb style={{ margin: "16px 0" }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb>
           <div
             className="site-layout-background"
             style={{ padding: 24, minHeight: 360 }}
           >
-          <Outlet />
+            <Outlet />
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>

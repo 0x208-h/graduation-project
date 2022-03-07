@@ -1,12 +1,12 @@
 import { lazy, Suspense } from "react";
-import { useRoutes } from "react-router-dom";
+import { useRoutes, Navigate } from "react-router-dom";
 import Home from "@/components/Home";
 const Login = lazy(
   () => import(/*WebpackChunkName: Login */ "@/components/Login")
 );
-// const Home = lazy(
-//   () => import(/*WebpackChunkName: Home */ "@/components/Home")
-// );
+const Welcome = lazy(
+  () => import(/*WebpackChunkName: Welcome */ "@/components/Welcome")
+);
 // const Home = import('@/components/Home')
 const Users = lazy(
   () => import(/*WebpackChunkName: Users */ "@/components/Users")
@@ -26,9 +26,22 @@ const useRoute = () => {
       ),
     },
     {
+      path: '',
+      element: <Navigate to="/home" />
+    },
+    {
       path: "/home",
       element: <Home />,
       children: [
+        {
+          path: "",
+          element: (
+            <Suspense fallback={null}>
+              <Welcome />
+            </Suspense>
+          ),
+          index: true,
+        },
         {
           path: "user",
           element: (
