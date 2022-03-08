@@ -376,3 +376,8 @@ T.prototype.func = () => {
 const t = new T();
 t.run();
 t.func();
+
+let str = '1234567891'
+let s = /(\d{1,3}(?=(\d{3})+$))/g
+console.log(str.replace(/(\d{1,3}(?=(\d{3})+$))/g, '$1,'));
+

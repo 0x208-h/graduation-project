@@ -2,9 +2,9 @@ import React, { useRef, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Layout, Menu } from "antd";
 import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
+  ShopOutlined,
+  UserOutlined,
+  HomeOutlined
 } from "@ant-design/icons";
 import styles from "./index.module.scss";
 
@@ -35,17 +35,14 @@ const Home = () => {
             sessionStorage.setItem("activePath", keyPath[0])
           }
         >
-          <Menu.Item key="/" icon={<PieChartOutlined />}>
+          <Menu.Item key="/" icon={<HomeOutlined />}>
             <Link to="">首页</Link>
           </Menu.Item>
-          <Menu.Item key="user" icon={<PieChartOutlined />}>
+          <Menu.Item key="user" icon={<UserOutlined />}>
             <Link to="user">用户管理</Link>
           </Menu.Item>
-          <Menu.Item key="good" icon={<DesktopOutlined />}>
+          <Menu.Item key="good" icon={<ShopOutlined />}>
             <Link to="good">商品管理</Link>
-          </Menu.Item>
-          <Menu.Item key="9" icon={<FileOutlined />}>
-            Files
           </Menu.Item>
         </Menu>
       </Sider>
