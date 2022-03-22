@@ -1,36 +1,50 @@
 import { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
-import Home from "@/components/Home"
+// import Home from "@/components/Home";
 import Router from "./route";
 
-// const Login = lazy(
-//   () => import(/*WebpackChunkName: Login */ "@/components/Login")
-// );
-// const Home = lazy(
-//   () => import(/*WebpackChunkName: Home */ "@/components/Home")
-// );
-// const Users = lazy(
-//   () => import(/*WebpackChunkName: Users */ "@/components/Users")
-// );
-// const Goods = lazy(
-//   () => import(/*WebpackChunkName: Goods */ "@/components/Goods")
-// );
+const Login = lazy(
+  () => import(/*WebpackChunkName: Login */ "@/components/Login")
+);
+const Home = lazy(
+  () => import(/*WebpackChunkName: Home */ "@/components/Home")
+);
+const NotFound = lazy(
+  () => import(/*WebpackChunkName: NotFound */ "@/components/NotFound")
+);
+const Users = lazy(
+  () => import(/*WebpackChunkName: Users */ "@/components/Users")
+);
+const Goods = lazy(
+  () => import(/*WebpackChunkName: Goods */ "@/components/Goods")
+);
+
+function RequireAuth(props: any) {
+  const auth = localStorage.getItem("token");
+  return auth ? props.children : <Navigate to="/login" replace />;
+}
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-         {/* <Suspense fallback={null}> */}
-          <Router /> 
-          {/* <Routes>
+        <Suspense fallback={null}>
+          <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<Home />}>
-              <Route path="good" element={<Goods />} />
-              <Route path="user" element={<Users />} />
+            <Route
+              path="/home/*"
+              element={
+                <RequireAuth>
+                <Home />
+                </RequireAuth>
+              }
+            >
             </Route>
-          </Routes> */}
-        {/* </Suspense> */}
+            <Route path="/404" element={<NotFound />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </div>
   );

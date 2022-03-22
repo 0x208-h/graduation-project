@@ -6,14 +6,27 @@ import styles from "./index.module.scss";
 const Login = () => {
   const navigate = useNavigate();
 
-  const fetchData = async () => {
-    const res = await axios.get('http://127.0.0.1:8080/api/user')
-    console.log(res)
-  }
+  const onFinish = async (values: any) => {
+    navigate('/home')
+    console.log("Success:", values);
+    const res = await axios.post("http://127.0.0.1:8080/api/user/login", {
+      user_id: values.user_id,
+      password: values.password,
+    });
+    console.log(res, 'res')
+    if(res && res.data && res.data.token) {
+      localStorage.setItem('token', `Bearer ${res.data.token}`)
+    }
+  };
 
-  useEffect( () => {
-    fetchData()
-  }, [])
+  // const fetchData = async () => {
+  //   const res = await axios.get('http://127.0.0.1:8080/api/user')
+  //   console.log(res)
+  // }
+
+  // useEffect( () => {
+  //   fetchData()
+  // }, [])
   return (
     <div className={styles.container}>
       <div className={styles.loginBox}>
@@ -21,17 +34,18 @@ const Login = () => {
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 18 }}
           className={styles.formContainer}
+          onFinish={onFinish}
         >
           <Form.Item
             label="用户名"
-            name="用户名"
+            name="user_id"
             rules={[{ required: true, message: "请输入用户名!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             label="密码"
-            name="密码"
+            name="password"
             rules={[{ required: true, message: "请输入密码!" }]}
           >
             <Input.Password />
@@ -43,7 +57,6 @@ const Login = () => {
             <Button
               type="primary"
               htmlType="submit"
-              onClick={() => navigate("/home")}
               className={styles.submitBtn}
             >
               登陆
