@@ -3,11 +3,11 @@ import {
   Link,
   Outlet,
   useLocation,
-  useNavigate,
   Routes,
   Route,
+  useNavigate,
 } from "react-router-dom";
-import { Layout, Menu, message } from "antd";
+import { Layout, Menu, message, Button, Popconfirm } from "antd";
 import { ShopOutlined, UserOutlined, HomeOutlined } from "@ant-design/icons";
 import styles from "./index.module.scss";
 const Users = lazy(
@@ -16,20 +16,23 @@ const Users = lazy(
 const Goods = lazy(
   () => import(/*WebpackChunkName: Goods */ "@/components/Goods")
 );
-const NotFound = lazy(
-  () => import(/*WebpackChunkName: NotFound */ "@/components/NotFound")
-);
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const Home = () => {
-  const navigator = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
+  // @ts-ignore
+  const username = location.state?.user_id;
   const keys = useRef<string[]>([sessionStorage.getItem("activePath") || "/"]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const onCollapse = () => setCollapsed(!collapsed);
-  console.log(location, sessionStorage.getItem("activePath"));
+  const handleEit = () => {
+    localStorage.removeItem("token");
+    message.success("退出登录成功", 2);
+    navigate("/login");
+  };
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider
@@ -59,7 +62,17 @@ const Home = () => {
         </Menu>
       </Sider>
       <Layout className={styles.siteLayout}>
-        <Header className={styles.siteLayoutBackground} />
+        <Header className={styles.siteLayoutBackground}>
+          <div>{`欢迎${username}`}</div>
+          <Popconfirm
+            title="确定退出嘛？"
+            okText="确定"
+            cancelText="取消"
+            onConfirm={handleEit}
+          >
+            <Button type="link">退出</Button>
+          </Popconfirm>
+        </Header>
         <Content style={{ margin: "0 16px" }}>
           <div
             className="site-layout-background"

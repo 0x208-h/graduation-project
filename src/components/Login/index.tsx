@@ -23,11 +23,11 @@ const Login = () => {
 
     if (res && res.statusText === "success") {
       localStorage.setItem("token", `Bearer ${res.token}`);
-      message.success(res.message);
+      message.success(res.message, 2);
       navigate("/home", { state: { user_id: res.user_id } });
     }
     if (res && res.statusText === "fail") {
-      message.error(res.message);
+      message.error(res.message, 2);
     }
   };
   return (
@@ -43,6 +43,7 @@ const Login = () => {
             label="用户名"
             name="user_id"
             rules={[{ required: true, message: "请输入用户名!" }]}
+            initialValue="admin"
           >
             <Input />
           </Form.Item>
@@ -50,6 +51,7 @@ const Login = () => {
             label="密码"
             name="password"
             rules={[{ required: true, message: "请输入密码!" }]}
+            initialValue="admin"
           >
             <Input.Password />
           </Form.Item>

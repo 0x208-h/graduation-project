@@ -9,6 +9,9 @@
 .siteLayout {
   .siteLayoutBackground {
     background: #fff;
-    padding: 0;
+    padding: 0 16px 0 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
   }
 }
