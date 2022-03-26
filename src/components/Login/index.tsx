@@ -1,32 +1,35 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button } from "antd";
-import axios from "axios";
+import { Form, Input, Button, message } from "antd";
+import { fetch } from "@/utils/axios";
 import styles from "./index.module.scss";
+
+interface LoginResponse {
+  token?: string;
+  message?: string;
+  user_id?: string;
+  status?: number;
+  statusText?: "success" | "fail";
+}
+
 const Login = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    navigate('/home')
-    console.log("Success:", values);
-    const res = await axios.post("http://127.0.0.1:8080/api/user/login", {
+    const res = await fetch.post<LoginResponse>("/api/user/login", {
       user_id: values.user_id,
       password: values.password,
     });
-    console.log(res, 'res')
-    if(res && res.data && res.data.token) {
-      localStorage.setItem('token', `Bearer ${res.data.token}`)
+
+    if (res && res.statusText === "success") {
+      localStorage.setItem("token", `Bearer ${res.token}`);
+      message.success(res.message);
+      navigate("/home", { state: { user_id: res.user_id } });
+    }
+    if (res && res.statusText === "fail") {
+      message.error(res.message);
     }
   };
-
-  // const fetchData = async () => {
-  //   const res = await axios.get('http://127.0.0.1:8080/api/user')
-  //   console.log(res)
-  // }
-
-  // useEffect( () => {
-  //   fetchData()
-  // }, [])
   return (
     <div className={styles.container}>
       <div className={styles.loginBox}>
