@@ -89,21 +89,18 @@ const GetStorage = (key: string): string => {
 }
 
 const axiosConfig = {
-  baseURL: '/ops-crm/wapi',
+  baseURL: '/api',
   headers: { token: GetStorage('token') }
 }
 const axiosInstance = axios.create(axiosConfig)
 axiosInstance.interceptors.response.use(
   response => {
-    if (typeof response.data === 'string' && response.data.indexOf('<!DOCTYPE html>') !== -1) {
-      window.location.href = `${window.location.origin}/cas-server/login?service=${window.location.href}`
-    }
     if (response.status === 200) {
       const res = response.data || response
-      if (res && res.data.status === 401) {
-        message.error('登陆过期，请重新登录')
-        return { reason: '登录过期，请重新登录' }
-      }
+      // if (res && res.data.status === 401) {
+      //   message.error('登陆过期，请重新登录')
+      //   return { reason: '登录过期，请重新登录' }
+      // }
       return res
     }
     return response
@@ -119,7 +116,7 @@ const _http = axiosInstance
 class Axios implements IHttpClient {
   public getStoreConfig() {
     return {
-      baseURL: `http://127.0.0.1:8000`,
+      baseURL: `http://127.0.0.1:8080`,
       headers: { token: GetStorage('token')}
     }
   }
