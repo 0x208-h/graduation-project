@@ -23,6 +23,7 @@ interface UsersInfoList {
   password: string;
   create_time: string;
   phone: string;
+  email: string;
   sex: string;
 }
 interface UsersInfoData {
@@ -56,6 +57,11 @@ const columns: ColumnProps<UsersInfoList>[] = [
     title: "电话",
     dataIndex: "phone",
     key: "phone",
+  },
+  {
+    title: "邮箱",
+    dataIndex: "email",
+    key: "email",
   },
   {
     title: "创建时间",
