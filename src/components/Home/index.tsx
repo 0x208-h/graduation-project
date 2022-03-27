@@ -31,6 +31,7 @@ const Home = () => {
   const handleEit = () => {
     localStorage.removeItem("token");
     sessionStorage.removeItem("username");
+    sessionStorage.removeItem("activePath");
     message.success("退出登录成功", 2);
     navigate("/login");
   };
