@@ -1,13 +1,13 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
-import { fetch } from "@/utils/axios";
+import { postApi } from "@/utils/axios";
 import styles from "./index.module.scss";
 
 interface LoginResponse {
   token?: string;
   message?: string;
-  user_id?: string;
+  user_id: string;
   status?: number;
   statusText?: "success" | "fail";
 }
@@ -16,15 +16,15 @@ const Login = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    const res = await fetch.post<LoginResponse>("/api/user/login", {
+    const res = await postApi<LoginResponse>("/user/login", {
       user_id: values.user_id,
       password: values.password,
     });
-
     if (res && res.statusText === "success") {
       localStorage.setItem("token", `Bearer ${res.token}`);
+      sessionStorage.setItem("username", res.user_id)
       message.success(res.message, 2);
-      navigate("/home", { state: { user_id: res.user_id } });
+      navigate("/home/welcome");
     }
     if (res && res.statusText === "fail") {
       message.error(res.message, 2);

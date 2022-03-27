@@ -2,10 +2,10 @@ import React, { useRef, useState, Suspense, lazy } from "react";
 import {
   Link,
   Outlet,
-  useLocation,
   Routes,
   Route,
   useNavigate,
+  Navigate,
 } from "react-router-dom";
 import { Layout, Menu, message, Button, Popconfirm } from "antd";
 import { ShopOutlined, UserOutlined, HomeOutlined } from "@ant-design/icons";
@@ -16,20 +16,21 @@ const Users = lazy(
 const Goods = lazy(
   () => import(/*WebpackChunkName: Goods */ "@/components/Goods")
 );
+const Welcome = lazy(
+  () => import(/*WebpackChunkName: Welcome */ "@/components/Welcome")
+);
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const Home = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  // @ts-ignore
-  const username = location.state?.user_id;
   const keys = useRef<string[]>([sessionStorage.getItem("activePath") || "/"]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const onCollapse = () => setCollapsed(!collapsed);
   const handleEit = () => {
     localStorage.removeItem("token");
+    sessionStorage.removeItem("username");
     message.success("退出登录成功", 2);
     navigate("/login");
   };
@@ -63,7 +64,7 @@ const Home = () => {
       </Sider>
       <Layout className={styles.siteLayout}>
         <Header className={styles.siteLayoutBackground}>
-          <div>{`欢迎${username}`}</div>
+          <div>{`欢迎${sessionStorage.getItem("username")}`}</div>
           <Popconfirm
             title="确定退出嘛？"
             okText="确定"
@@ -80,8 +81,10 @@ const Home = () => {
           >
             <Suspense fallback={null}>
               <Routes>
+                <Route path="/welcome" element={<Welcome />} />
                 <Route path="good" element={<Goods />} />
                 <Route path="user" element={<Users />} />
+                <Route path="" element={<Navigate to="welcome" />} />
               </Routes>
             </Suspense>
             <Outlet />
