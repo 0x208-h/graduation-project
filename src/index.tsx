@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { ConfigProvider } from "antd";
+import zh_CN from "antd/lib/locale-provider/zh_CN";
 import "./index.css";
 import App from "./App";
 import { store } from "./app/store";
@@ -9,7 +11,9 @@ import * as serviceWorker from "./serviceWorker";
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
+      <ConfigProvider locale={zh_CN}>
         <App />
+      </ConfigProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById("root")
