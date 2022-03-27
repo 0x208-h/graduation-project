@@ -348,7 +348,7 @@ obj.d()();
 obj.e()();
 
 
-global.x = 0
+window.x = 0
 let x = 1
 
 class T {
@@ -380,4 +380,30 @@ t.func();
 let str = '1234567891'
 let s = /(\d{1,3}(?=(\d{3})+$))/g
 console.log(str.replace(/(\d{1,3}(?=(\d{3})+$))/g, '$1,'));
+
+let nums = 1234563337.1234
+function fn(nums) {
+  // const str = nums.toString().split('.')
+  // let s = str[0].split('').reverse().join('')
+  // let res = ''
+  // for(let i = 0; i < s.length; i ++) {
+  //   if(( i !== 0) && (i % 3 === 0)) {
+  //     res += ','
+  //   }
+  //   res += s[i]
+  // }
+  // res = res.split('').reverse().join('')
+  // if(str[1]) {
+  //   res +=  '.' + str[1]
+  // }
+  // return res
+  const str = nums.toString().split('.')
+  let res = str[0].replace(/(\d{1,3}(?=(\d{3})+$))/g, '$1,')
+  if(str[1]) {
+    res += '.' + str[1]
+  }
+  console.log(res)
+}
+
+console.log(fn(nums))
 
