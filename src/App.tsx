@@ -1,8 +1,6 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
-// import Home from "@/components/Home";
-import Router from "./route";
 
 const Login = lazy(
   () => import(/*WebpackChunkName: Login */ "@/components/Login")
@@ -12,12 +10,6 @@ const Home = lazy(
 );
 const NotFound = lazy(
   () => import(/*WebpackChunkName: NotFound */ "@/components/NotFound")
-);
-const Users = lazy(
-  () => import(/*WebpackChunkName: Users */ "@/components/Users")
-);
-const Goods = lazy(
-  () => import(/*WebpackChunkName: Goods */ "@/components/Goods")
 );
 
 function RequireAuth(props: any) {

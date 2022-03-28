@@ -1,3 +1,8 @@
-.searchContainer{
-  // margin: 24px;
+.operator {
+  display: flex;
+  justify-content: space-between;
+  .addUserBtn {
+    display: flex;
+    align-items: center;
+  }
 }

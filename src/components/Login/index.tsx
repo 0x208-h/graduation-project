@@ -42,18 +42,20 @@ const Login = () => {
           <Form.Item
             label="用户名"
             name="user_id"
+            hasFeedback
             rules={[{ required: true, message: "请输入用户名!" }]}
             initialValue="admin"
           >
-            <Input />
+            <Input allowClear />
           </Form.Item>
           <Form.Item
             label="密码"
             name="password"
             rules={[{ required: true, message: "请输入密码!" }]}
             initialValue="admin"
+            hasFeedback
           >
-            <Input.Password />
+            <Input.Password allowClear />
           </Form.Item>
           <Form.Item
             wrapperCol={{ offset: 6, span: 18 }}

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Card, Input, Form, Table, message } from "antd";
+import { Card, Input, Form, Table, message, Button } from "antd";
+import { UserAddOutlined } from "@ant-design/icons";
 import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
 import moment from "moment";
+import AddUser from "./AddUsers";
 import { queryApi } from "@/utils/axios";
 
 import styles from "./index.module.scss";
@@ -78,6 +80,7 @@ const columns: ColumnProps<UsersInfoList>[] = [
 
 const Users = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
+  const [visible, setVisible] = useState<boolean>(false);
   const [tableList, setTableList] = useState<UsersInfoData>({
     total: 0,
     pageNum: 1,
@@ -94,9 +97,8 @@ const Users = () => {
       const res = await queryApi<UsersInfoResponse>(`/user/all`, params);
       if (res.status === 200) {
         setTableList(res.pageInfo);
-        console.log(res.pageInfo);
       }
-    } catch(err) {
+    } catch (err) {
       message.error("用户接口错误");
     } finally {
       setTableLoading(false);
@@ -115,18 +117,29 @@ const Users = () => {
   };
   return (
     <>
-      <Card className={styles.searchContainer}>
-        <Form>
-          <Form.Item label="用户名">
-            <Input.Search
-              placeholder="请输入用户名进行搜索"
-              onSearch={onSearch}
-              style={{ width: 304 }}
-              allowClear
-              enterButton
-            />
-          </Form.Item>
-        </Form>
+      <Card>
+        <div className={styles.operator}>
+          <Form>
+            <Form.Item label="用户名">
+              <Input.Search
+                placeholder="请输入用户名进行搜索"
+                onSearch={onSearch}
+                style={{ width: 304 }}
+                allowClear
+                enterButton
+              />
+            </Form.Item>
+          </Form>
+          <Button
+            className={styles.addUserBtn}
+            type="primary"
+            icon={<UserAddOutlined />}
+            shape="round"
+            onClick={() => setVisible(true)}
+          >
+            新增用户
+          </Button>
+        </div>
         <Table
           columns={columns}
           dataSource={tableList.list}
@@ -145,6 +158,7 @@ const Users = () => {
           }}
         />
       </Card>
+      <AddUser visible={visible} closeModal={() => setVisible(false)} />
     </>
   );
 };
