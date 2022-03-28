@@ -9,13 +9,11 @@ import { Provider } from "react-redux";
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-  <React.StrictMode>
     <Provider store={store}>
       <ConfigProvider locale={zh_CN}>
         <App />
       </ConfigProvider>
-    </Provider>
-  </React.StrictMode>,
+    </Provider>,
   document.getElementById("root")
 );
 
