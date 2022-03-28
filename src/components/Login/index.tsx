@@ -21,7 +21,7 @@ const Login = () => {
       password: values.password,
     });
     if (res && res.statusText === "success") {
-      localStorage.setItem("token", `Bearer ${res.token}`);
+      sessionStorage.setItem("token", `Bearer ${res.token}`);
       sessionStorage.setItem("username", res.user_id)
       message.success(res.message, 2);
       navigate("/home/welcome");

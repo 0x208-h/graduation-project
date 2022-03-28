@@ -96,7 +96,7 @@ const Users = () => {
         setTableList(res.pageInfo);
         console.log(res.pageInfo);
       }
-    } catch {
+    } catch(err) {
       message.error("用户接口错误");
     } finally {
       setTableLoading(false);

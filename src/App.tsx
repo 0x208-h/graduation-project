@@ -21,7 +21,7 @@ const Goods = lazy(
 );
 
 function RequireAuth(props: any) {
-  const auth = localStorage.getItem("token");
+  const auth = sessionStorage.getItem("token");
   return auth ? props.children : <Navigate to="/login" replace />;
 }
 

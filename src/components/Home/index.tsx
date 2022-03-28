@@ -29,7 +29,7 @@ const Home = () => {
 
   const onCollapse = () => setCollapsed(!collapsed);
   const handleEit = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("activePath");
     message.success("退出登录成功", 2);
@@ -85,7 +85,7 @@ const Home = () => {
                 <Route path="/welcome" element={<Welcome />} />
                 <Route path="good" element={<Goods />} />
                 <Route path="user" element={<Users />} />
-                <Route path="" element={<Navigate to="welcome" />} />
+                <Route path="*" element={<Navigate to="welcome" />} />
               </Routes>
             </Suspense>
             <Outlet />
