@@ -1,9 +1,29 @@
 import React, { FC, useState } from "react";
-import { Modal, Form, Input } from "antd";
+import { Modal, Form, Input, message, Radio } from "antd";
+import moment from "moment";
+import { postApi } from "@/utils/axios";
 
 interface AddUserProps {
   visible: boolean;
   closeModal: () => void;
+  fetchData: () => void;
+}
+interface AddUserSubmitProps {
+  username: string;
+  password: string;
+  phone: string;
+  email: string;
+  create_time: string;
+  sex: number;
+}
+
+interface ValuesProps extends AddUserSubmitProps {
+  confirmPassword?: string;
+}
+
+interface AddUserResponse {
+  status?: number;
+  statusText?: string;
 }
 
 const formItemLayout = {
@@ -17,10 +37,27 @@ const formItemLayout = {
   },
 };
 
-const AddUser: FC<AddUserProps> = ({ visible, closeModal }) => {
+const AddUser: FC<AddUserProps> = ({ visible, closeModal, fetchData }) => {
+  const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-  const onFinish = (values: any) => {
-    console.log(values);
+  const handleSubmit = async (data: AddUserSubmitProps) => {
+    data = {
+      ...data,
+      create_time: moment().format('YYYY-MM-DD')
+    }
+    try{
+      setConfirmLoading(true)
+      const res = await postApi<AddUserResponse>('/user/add', data)
+      if(res.status === 200) {
+        message.success(res.statusText, 2)
+        closeModal()
+        fetchData()
+      }
+    }  catch (err) {
+      message.error("添加用户失败", 2);
+    } finally {
+      setConfirmLoading(false);
+    }
   };
   return (
     <Modal
@@ -28,15 +65,38 @@ const AddUser: FC<AddUserProps> = ({ visible, closeModal }) => {
       visible={visible}
       onCancel={closeModal}
       confirmLoading={confirmLoading}
+      getContainer={false}
+      onOk={() => {
+        form
+          .validateFields()
+          .then((values: ValuesProps) => {
+            delete values.confirmPassword;
+            handleSubmit(values)
+          })
+          .catch((info) => {
+            console.log("Validate Failed:", info);
+          });
+      }}
     >
-      <Form {...formItemLayout} onFinish={onFinish}>
+      <Form {...formItemLayout} form={form}>
         <Form.Item
           label="用户名"
-          name="user_id"
+          name="username"
           hasFeedback
           rules={[{ required: true, message: "请输入用户名!" }]}
         >
           <Input allowClear />
+        </Form.Item>
+        <Form.Item
+          label="性别"
+          name="sex"
+          hasFeedback
+          rules={[{ required: true, message: "请输入你的性别!" }]}
+        >
+            <Radio.Group>
+            <Radio value={1}>男</Radio>
+            <Radio value={0}>女</Radio>
+          </Radio.Group>
         </Form.Item>
         <Form.Item
           label="密码"
@@ -71,7 +131,7 @@ const AddUser: FC<AddUserProps> = ({ visible, closeModal }) => {
           hasFeedback
           rules={[
             { required: true, message: "请输入电话!" },
-            ({ getFieldValue }) => ({
+            () => ({
               validator(_, value) {
                 const reg = /^1[3456789]\d{9}$/;
                 if (!value || reg.test(value)) {

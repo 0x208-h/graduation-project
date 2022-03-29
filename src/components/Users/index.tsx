@@ -13,6 +13,16 @@ const initialValue = {
   pageSize: 10,
 };
 
+enum SEX_TYPE {
+  WOMAN,
+  MAN,
+}
+
+const sexType = [
+  { code: SEX_TYPE.MAN, value: "男" },
+  { code: SEX_TYPE.WOMAN, value: "女" },
+];
+
 interface GetAllUsersInfo {
   username?: string;
   pageNum?: number;
@@ -26,7 +36,7 @@ interface UsersInfoList {
   create_time: string;
   phone: string;
   email: string;
-  sex: string;
+  sex: number;
 }
 interface UsersInfoData {
   total: number;
@@ -49,6 +59,7 @@ const columns: ColumnProps<UsersInfoList>[] = [
     title: "性别",
     dataIndex: "sex",
     key: "sex",
+    render: (text: number) => sexType.find(item => item.code === text)?.value,
   },
   {
     title: "密码",
@@ -99,7 +110,7 @@ const Users = () => {
         setTableList(res.pageInfo);
       }
     } catch (err) {
-      message.error("用户接口错误");
+      message.error("用户接口错误", 2);
     } finally {
       setTableLoading(false);
     }
@@ -158,7 +169,11 @@ const Users = () => {
           }}
         />
       </Card>
-      <AddUser visible={visible} closeModal={() => setVisible(false)} />
+      <AddUser
+        visible={visible}
+        closeModal={() => setVisible(false)}
+        fetchData={fetchData}
+      />
     </>
   );
 };
