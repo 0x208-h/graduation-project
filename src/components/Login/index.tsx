@@ -7,7 +7,7 @@ import styles from "./index.module.scss";
 interface LoginResponse {
   token?: string;
   message?: string;
-  user_id: string;
+  username: string;
   status?: number;
   statusText?: "success" | "fail";
 }
@@ -17,12 +17,12 @@ const Login = () => {
 
   const onFinish = async (values: any) => {
     const res = await postApi<LoginResponse>("/user/login", {
-      user_id: values.user_id,
+      username: values.username,
       password: values.password,
     });
     if (res && res.statusText === "success") {
       sessionStorage.setItem("token", `Bearer ${res.token}`);
-      sessionStorage.setItem("username", res.user_id)
+      sessionStorage.setItem("username", res.username)
       message.success(res.message, 2);
       navigate("/home/welcome");
     }
@@ -41,7 +41,7 @@ const Login = () => {
         >
           <Form.Item
             label="用户名"
-            name="user_id"
+            name="username"
             hasFeedback
             rules={[{ required: true, message: "请输入用户名!" }]}
             initialValue="admin"

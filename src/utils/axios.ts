@@ -2,7 +2,7 @@ import axios from "axios";
 import { queryClean } from "./util";
 
 const GetStorage = (key: string): string => {
-  const storage = window.localStorage;
+  const storage = window.sessionStorage;
   if (storage.length !== 0) {
     return storage.getItem(key) || "";
   }
