@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Card, Input, Form, Table, message, Button } from "antd";
-import { UserAddOutlined } from "@ant-design/icons";
+import { Card, Input, Form, Table, message, Button, Modal } from "antd";
+import { UserAddOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
 import moment from "moment";
 import AddUser from "./AddUsers";
-import { queryApi } from "@/utils/axios";
-
+import { queryApi, deleteApi } from "@/utils/axios";
 import styles from "./index.module.scss";
+
+const { confirm } = Modal;
 
 const initialValue = {
   pageNum: 1,
@@ -49,49 +50,15 @@ interface UsersInfoResponse {
   pageInfo: UsersInfoData;
 }
 
-const columns: ColumnProps<UsersInfoList>[] = [
-  {
-    title: "用户名",
-    dataIndex: "username",
-    key: "username",
-  },
-  {
-    title: "性别",
-    dataIndex: "sex",
-    key: "sex",
-    render: (text: number) => sexType.find(item => item.code === text)?.value,
-  },
-  {
-    title: "密码",
-    dataIndex: "password",
-    key: "password",
-  },
-  {
-    title: "电话",
-    dataIndex: "phone",
-    key: "phone",
-  },
-  {
-    title: "邮箱",
-    dataIndex: "email",
-    key: "email",
-  },
-  {
-    title: "创建时间",
-    dataIndex: "create_time",
-    key: "create_time",
-    render: (text: string) => moment(text).format("YYYY-MM-DD"),
-  },
-  {
-    title: "操作",
-    dataIndex: "operator",
-    key: "operator",
-  },
-];
+interface DeleteUserInfoResponse {
+  status: number;
+  statusText: string;
+}
 
 const Users = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
+  const [deleteBtnLoading, setDeleteBtnLoading] = useState<boolean>(false);
   const [tableList, setTableList] = useState<UsersInfoData>({
     total: 0,
     pageNum: 1,
@@ -115,6 +82,91 @@ const Users = () => {
       setTableLoading(false);
     }
   };
+
+  function showDeleteConfirm(id: string) {
+    confirm({
+      title: "你确定要删除该用户吗？",
+      icon: <ExclamationCircleOutlined />,
+      okText: "确定",
+      okButtonProps: { disabled: deleteBtnLoading },
+      okType: "danger",
+      cancelText: "取消",
+      async onOk() {
+        try {
+          setDeleteBtnLoading(true);
+          const res = await deleteApi<DeleteUserInfoResponse>(`user/${id}`);
+          if (res.status === 200) {
+            message.success(res.statusText, 2);
+          }
+          fetchData();
+        } catch (err) {
+          message.error("删除用户失败!", 2);
+        } finally {
+          setDeleteBtnLoading(false);
+        }
+      },
+    });
+  }
+
+  const columns: ColumnProps<UsersInfoList>[] = [
+    {
+      title: "用户名",
+      dataIndex: "username",
+      align: "center",
+      key: "username",
+    },
+    {
+      title: "性别",
+      dataIndex: "sex",
+      align: "center",
+      key: "sex",
+      render: (text: number) =>
+        sexType.find((item) => item.code === text)?.value,
+    },
+    {
+      title: "密码",
+      dataIndex: "password",
+      align: "center",
+      key: "password",
+    },
+    {
+      title: "电话",
+      dataIndex: "phone",
+      align: "center",
+      key: "phone",
+    },
+    {
+      title: "邮箱",
+      dataIndex: "email",
+      align: "center",
+      key: "email",
+    },
+    {
+      title: "创建时间",
+      dataIndex: "create_time",
+      align: "center",
+      key: "create_time",
+      render: (text: string) => moment(text).format("YYYY-MM-DD"),
+    },
+    {
+      title: "操作",
+      dataIndex: "operator",
+      align: "center",
+      key: "operator",
+      render: (text: string, record: UsersInfoList) => {
+        return (
+          <>
+            <Button type="primary" style={{ marginRight: 8 }}>
+              编辑
+            </Button>
+            <Button danger onClick={() => showDeleteConfirm(record.user_id)}>
+              删除
+            </Button>
+          </>
+        );
+      },
+    },
+  ];
 
   const handleChange = (page: TablePaginationConfig) => {
     fetchData({ pageNum: page.current, pageSize: page.pageSize });
