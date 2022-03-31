@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
+import axios from "axios";
+import { baseURL } from "@/utils/constant";
 import { postApi } from "@/utils/axios";
 import styles from "./index.module.scss";
 
@@ -16,13 +18,19 @@ const Login = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    const res = await postApi<LoginResponse>("/user/login", {
+    // const res = await postApi<LoginResponse>("/user/login", {
+    //   username: values.username,
+    //   password: values.password,
+    // });
+    const result = await axios.post(`${baseURL}/user/login`, {
       username: values.username,
       password: values.password,
     });
+    const res = result.data.data;
+    console.log(res, "res");
     if (res && res.statusText === "success") {
       sessionStorage.setItem("token", `Bearer ${res.token}`);
-      sessionStorage.setItem("username", res.username)
+      sessionStorage.setItem("username", res.username);
       message.success(res.message, 2);
       navigate("/home/welcome");
     }

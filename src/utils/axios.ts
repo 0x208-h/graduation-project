@@ -1,5 +1,7 @@
 import axios from "axios";
+import { message } from "antd";
 import { queryClean } from "./util";
+import { baseURL } from "./constant";
 
 const GetStorage = (key: string): string => {
   const storage = window.sessionStorage;
@@ -10,7 +12,7 @@ const GetStorage = (key: string): string => {
 };
 
 const axiosConfig = {
-  baseURL: "http://127.0.0.1:8080/api",
+  baseURL,
   headers: { authorization: GetStorage("token") },
 };
 
@@ -20,6 +22,10 @@ axiosInstance.interceptors.response.use(
     if (response.status === 200) {
       const res = response.data || response;
       return res;
+    }
+    if (response.status === 401) {
+      sessionStorage.removeItem("token");
+      window.location.href = `${window.location.origin}/login`;
     }
     return response;
   },
