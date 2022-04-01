@@ -1,13 +1,8 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { Modal, Form, Input, message, Radio } from "antd";
 import moment from "moment";
-import { postApi } from "@/utils/axios";
+import { postApi, putApi } from "@/utils/axios";
 
-interface AddUserProps {
-  visible: boolean;
-  closeModal: () => void;
-  fetchData: () => void;
-}
 interface AddUserSubmitProps {
   username: string;
   password: string;
@@ -15,8 +10,21 @@ interface AddUserSubmitProps {
   email: string;
   create_time: string;
   sex: number;
+  user_id?: string;
 }
 
+interface UserInfoDetailProps extends AddUserSubmitProps {
+  user_id: string;
+}
+
+interface AddUserProps {
+  type: "new" | "edit";
+  visible: boolean;
+  detail: UserInfoDetailProps;
+  closeModal: () => void;
+  fetchData: () => void;
+  setType: () => void;
+}
 interface ValuesProps extends AddUserSubmitProps {
   confirmPassword?: string;
 }
@@ -37,24 +45,42 @@ const formItemLayout = {
   },
 };
 
-const AddUser: FC<AddUserProps> = ({ visible, closeModal, fetchData }) => {
+const AddUser: FC<AddUserProps> = ({
+  type,
+  detail,
+  visible,
+  closeModal,
+  fetchData,
+  setType,
+}) => {
   const [form] = Form.useForm();
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (type === "edit") form.setFieldsValue(detail);
+  }, [detail]);
+
   const handleSubmit = async (data: AddUserSubmitProps) => {
     data = {
       ...data,
-      create_time: moment().format('YYYY-MM-DD')
-    }
-    try{
-      setConfirmLoading(true)
-      const res = await postApi<AddUserResponse>('/user/add', data)
-      if(res.status === 200) {
-        message.success(res.statusText, 2)
-        closeModal()
-        fetchData()
+      create_time: moment().format("YYYY-MM-DD"),
+    };
+    try {
+      setConfirmLoading(true);
+      const res = await (type === "new" ? postApi : putApi)<AddUserResponse>(
+        type === "new" ? "/user/add" : `/user/${detail.user_id}`,
+        data
+      );
+      if (res.status === 200) {
+        message.success(res.statusText, 2);
+        closeModal();
+        fetchData();
+        form.resetFields();
       }
-    }  catch (err) {
-      message.error("添加用户失败", 2);
+    } catch (err) {
+      type === "new"
+        ? message.error("添加用户失败", 2)
+        : message.error("更改用户信息失败", 2);
     } finally {
       setConfirmLoading(false);
     }
@@ -62,8 +88,13 @@ const AddUser: FC<AddUserProps> = ({ visible, closeModal, fetchData }) => {
   return (
     <Modal
       title="新增用户"
+      destroyOnClose
       visible={visible}
-      onCancel={closeModal}
+      onCancel={() => {
+        closeModal();
+        form.resetFields();
+        setType();
+      }}
       confirmLoading={confirmLoading}
       getContainer={false}
       onOk={() => {
@@ -71,7 +102,7 @@ const AddUser: FC<AddUserProps> = ({ visible, closeModal, fetchData }) => {
           .validateFields()
           .then((values: ValuesProps) => {
             delete values.confirmPassword;
-            handleSubmit(values)
+            handleSubmit(values);
           })
           .catch((info) => {
             console.log("Validate Failed:", info);
@@ -93,7 +124,7 @@ const AddUser: FC<AddUserProps> = ({ visible, closeModal, fetchData }) => {
           hasFeedback
           rules={[{ required: true, message: "请输入你的性别!" }]}
         >
-            <Radio.Group>
+          <Radio.Group>
             <Radio value={1}>男</Radio>
             <Radio value={0}>女</Radio>
           </Radio.Group>
@@ -106,25 +137,27 @@ const AddUser: FC<AddUserProps> = ({ visible, closeModal, fetchData }) => {
         >
           <Input.Password allowClear />
         </Form.Item>
-        <Form.Item
-          label="确认密码"
-          name="confirmPassword"
-          hasFeedback
-          dependencies={["password"]}
-          rules={[
-            { required: true, message: "请输入确认密码!" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("password") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("两次输入的密码不对！"));
-              },
-            }),
-          ]}
-        >
-          <Input.Password allowClear />
-        </Form.Item>
+        {type === "new" && (
+          <Form.Item
+            label="确认密码"
+            name="confirmPassword"
+            hasFeedback
+            dependencies={["password"]}
+            rules={[
+              { required: true, message: "请输入确认密码!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("两次输入的密码不对！"));
+                },
+              }),
+            ]}
+          >
+            <Input.Password allowClear />
+          </Form.Item>
+        )}
         <Form.Item
           label="电话"
           name="phone"

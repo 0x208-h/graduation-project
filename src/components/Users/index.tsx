@@ -54,11 +54,18 @@ interface DeleteUserInfoResponse {
   status: number;
   statusText: string;
 }
+interface GetUserInfoDetailResponse {
+  status: number;
+  detail: UsersInfoList;
+}
 
 const Users = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
   const [visible, setVisible] = useState<boolean>(false);
   const [deleteBtnLoading, setDeleteBtnLoading] = useState<boolean>(false);
+  const [type, setType] = useState<"new" | "edit">("new");
+  const [id, setId] = useState<string>("");
+  const [detail, setDetail] = useState<UsersInfoList>({} as UsersInfoList);
   const [tableList, setTableList] = useState<UsersInfoData>({
     total: 0,
     pageNum: 1,
@@ -83,7 +90,22 @@ const Users = () => {
     }
   };
 
-  function showDeleteConfirm(id: string) {
+  const getUserInfoDetail = async () => {
+    try {
+      const res = await queryApi<GetUserInfoDetailResponse>(`user/${id}`);
+      if (res.status === 200) {
+        setDetail(res.detail);
+      }
+    } catch (err) {
+      message.error("获取用户信息失败", 2);
+    }
+  };
+
+  useEffect(() => {
+    if (id) getUserInfoDetail();
+  }, [id]);
+
+  const showDeleteConfirm = (id: string) => {
     confirm({
       title: "你确定要删除该用户吗？",
       icon: <ExclamationCircleOutlined />,
@@ -106,7 +128,13 @@ const Users = () => {
         }
       },
     });
-  }
+  };
+
+  const handleEdit = (id: string) => {
+    setId(id);
+    setType("edit");
+    setVisible(true);
+  };
 
   const columns: ColumnProps<UsersInfoList>[] = [
     {
@@ -156,7 +184,11 @@ const Users = () => {
       render: (text: string, record: UsersInfoList) => {
         return (
           <>
-            <Button type="primary" style={{ marginRight: 8 }}>
+            <Button
+              type="primary"
+              style={{ marginRight: 8 }}
+              onClick={() => handleEdit(record.user_id)}
+            >
               编辑
             </Button>
             <Button danger onClick={() => showDeleteConfirm(record.user_id)}>
@@ -198,7 +230,10 @@ const Users = () => {
             type="primary"
             icon={<UserAddOutlined />}
             shape="round"
-            onClick={() => setVisible(true)}
+            onClick={() => {
+              setVisible(true);
+              setType("new");
+            }}
           >
             新增用户
           </Button>
@@ -223,8 +258,13 @@ const Users = () => {
       </Card>
       <AddUser
         visible={visible}
-        closeModal={() => setVisible(false)}
+        type={type}
+        detail={detail}
+        closeModal={() => {
+          setVisible(false);
+        }}
         fetchData={fetchData}
+        setType={() => setType("new")}
       />
     </>
   );
