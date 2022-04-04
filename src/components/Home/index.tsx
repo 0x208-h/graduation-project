@@ -43,7 +43,12 @@ const Home = () => {
         onCollapse={onCollapse}
         className={styles.container}
       >
-        <div className={styles.logo} />
+        <div
+          className={styles.logo}
+          style={{ background: !collapsed ? "#eff2f5" : "black" }}
+        >
+          {!collapsed ? "电商平台管理系统" : ""}
+        </div>
         <Menu
           theme="dark"
           defaultSelectedKeys={keys.current}
