@@ -78,8 +78,6 @@ const Users = () => {
       const res = await queryApi<UsersInfoResponse>(`/user/all`, params);
       if (res.status === 200) {
         setTableList(res.pageInfo);
-      } else {
-        message.error("用户接口错误", 2);
       }
     } catch (err) {
       message.error("用户接口错误", 2);
@@ -93,9 +91,7 @@ const Users = () => {
       const res = await queryApi<GetUserInfoDetailResponse>(`user/${id}`);
       if (res.status === 200) {
         setDetail(res.detail);
-      } else {
-        message.error("获取用户信息失败", 2);
-      }
+      } 
     } catch (err) {
       message.error("获取用户信息失败", 2);
     }
@@ -119,9 +115,7 @@ const Users = () => {
           const res = await deleteApi<DeleteResponse>(`user/${id}`);
           if (res.status === 200) {
             message.success(res.statusText, 2);
-          } else {
-            message.error("删除用户失败!", 2);
-          }
+          } 
           fetchData();
         } catch (err) {
           message.error("删除用户失败!", 2);

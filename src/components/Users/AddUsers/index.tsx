@@ -71,10 +71,6 @@ const AddUser: FC<AddUserProps> = ({
         closeModal();
         fetchData();
         form.resetFields();
-      } else {
-        type === "new"
-          ? message.error("添加用户失败", 2)
-          : message.error("更改用户信息失败", 2);
       }
     } catch (err) {
       type === "new"
