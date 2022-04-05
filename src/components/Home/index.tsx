@@ -8,7 +8,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Layout, Menu, message, Button, Popconfirm } from "antd";
-import { ShopOutlined, UserOutlined, HomeOutlined } from "@ant-design/icons";
+import {
+  ShopOutlined,
+  UserOutlined,
+  HomeOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import styles from "./index.module.scss";
 const Users = lazy(
   () => import(/*WebpackChunkName: Users */ "@/components/Users")
@@ -19,8 +24,18 @@ const Goods = lazy(
 const Welcome = lazy(
   () => import(/*WebpackChunkName: Welcome */ "@/components/Welcome")
 );
+const Order = lazy(
+  () => import(/*WebpackChunkName: Order */ "@/components/Order")
+);
+const AddGoodsInfo = lazy(
+  () =>
+    import(
+      /*WebpackChunkName: AddGoodsInfo */ "@/components/Goods/AddGoodsInfo"
+    )
+);
 
 const { Header, Content, Footer, Sider } = Layout;
+const { SubMenu } = Menu;
 
 const Home = () => {
   const navigate = useNavigate();
@@ -63,8 +78,17 @@ const Home = () => {
           <Menu.Item key="user" icon={<UserOutlined />}>
             <Link to="user">用户管理</Link>
           </Menu.Item>
-          <Menu.Item key="good" icon={<ShopOutlined />}>
-            <Link to="good">商品管理</Link>
+          <SubMenu key="goods" icon={<ShopOutlined />} title="商品管理">
+          <Menu.Item key="goods">
+              <Link to="goods">商品管理</Link>
+            </Menu.Item>
+            <Menu.Item key="goods/add">
+              <Link to="goods/add">添加商品</Link>
+            </Menu.Item>
+          </SubMenu>
+
+          <Menu.Item key="order" icon={<UnorderedListOutlined />}>
+            <Link to="order">订单管理</Link>
           </Menu.Item>
         </Menu>
       </Sider>
@@ -88,8 +112,10 @@ const Home = () => {
             <Suspense fallback={null}>
               <Routes>
                 <Route path="/welcome" element={<Welcome />} />
-                <Route path="good" element={<Goods />} />
-                <Route path="user" element={<Users />} />
+                <Route path="/goods" element={<Goods />} />
+                <Route path="/goods/add" element={<AddGoodsInfo />} />
+                <Route path="/user" element={<Users />} />
+                <Route path="/order" element={<Order />} />
                 <Route path="*" element={<Navigate to="welcome" />} />
               </Routes>
             </Suspense>

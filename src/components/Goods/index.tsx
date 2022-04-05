@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, Input, Form, Table, message, Button, Modal } from "antd";
 import { ShoppingOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
@@ -61,6 +62,7 @@ interface GoodsInfoResponse {
 }
 
 const Goods = () => {
+  const navigate = useNavigate();
   const [tableLoading, setTableLoading] = useState<boolean>(false);
   const [deleteBtnLoading, setDeleteBtnLoading] = useState<boolean>(false);
   const [updateStatusLoading, setUpdateStatusLoading] =
@@ -292,10 +294,9 @@ const Goods = () => {
             type="primary"
             icon={<ShoppingOutlined />}
             shape="round"
-            // onClick={() => {
-            //   setVisible(true);
-            //   setType("new");
-            // }}
+            onClick={() => {
+              navigate("/home/goods/add");
+            }}
           >
             新增商品
           </Button>
