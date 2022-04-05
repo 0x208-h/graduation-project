@@ -6,6 +6,7 @@ import moment from "moment";
 import { queryApi, deleteApi, putApi } from "@/utils/axios";
 import { DeleteResponse, UpdateResponse } from "@/utils/constant";
 import styles from "./index.module.scss";
+import GoodsDetail from "./GoodsDetail";
 
 const { confirm } = Modal;
 
@@ -19,7 +20,7 @@ enum ISPUTAWAY {
   PUTAWAY,
 }
 
-const IsPutAwayStatus = [
+export const IsPutAwayStatus = [
   { code: ISPUTAWAY.SOLD_OUT, value: "已下架", btnValue: "设置上架" },
   { code: ISPUTAWAY.PUTAWAY, value: "再售", btnValue: "设置下架" },
 ];
@@ -30,7 +31,7 @@ interface GetAllGoodsInfo {
   pageSize?: number;
 }
 
-interface GoodsInfoList {
+export interface GoodsInfoList {
   goods_id: string;
   goods_name: string;
   goods_desc: string;
@@ -40,6 +41,11 @@ interface GoodsInfoList {
   is_putaway: number;
   goods_detail: string;
   create_time: string;
+}
+
+interface GetGoodsInfoDetailResponse {
+  status: number;
+  detail: GoodsInfoList;
 }
 
 interface GoodsInfoData {
@@ -59,7 +65,9 @@ const Goods = () => {
   const [deleteBtnLoading, setDeleteBtnLoading] = useState<boolean>(false);
   const [updateStatusLoading, setUpdateStatusLoading] =
     useState<boolean>(false);
-  const [drawerLoading, setDrawerLoading] = useState<boolean>(false);
+  const [drawerVisible, setDrawerVisible] = useState<boolean>(false);
+  const [index, setIndex] = useState<number>(0);
+  const [detail, setDetail] = useState<GoodsInfoList>({} as GoodsInfoList);
   const [tableList, setTableList] = useState<GoodsInfoData>({
     total: 0,
     pageNum: 1,
@@ -94,6 +102,25 @@ const Goods = () => {
   };
 
   const handleEdit = (id: string) => {};
+
+  const getGoodsDetail = async (id: string) => {
+    try {
+      const res = await queryApi<GetGoodsInfoDetailResponse>(`goods/${id}`);
+      if (res.status === 200) {
+        setDetail(res.detail);
+      }
+    } catch (err) {
+      message.error("获取当前商品信息失败", 2);
+    }
+  };
+
+  const gotoBy = (offset: number) => () => {
+    const newIndex = index + offset;
+    if (newIndex >= 0 && newIndex < tableList?.total) {
+      getGoodsDetail(tableList?.list[newIndex].goods_id);
+      setIndex(newIndex);
+    }
+  };
 
   const showDeleteConfirm = (id: string) => {
     confirm({
@@ -140,6 +167,11 @@ const Goods = () => {
     }
   };
 
+  const handleDetail = (id: string) => {
+    setDrawerVisible(true);
+    getGoodsDetail(id);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -150,6 +182,11 @@ const Goods = () => {
       dataIndex: "goods_name",
       align: "center",
       key: "goods_name",
+      render: (text: string, record: GoodsInfoList) => (
+        <Button type="link" onClick={() => handleDetail(record.goods_id)}>
+          {text}
+        </Button>
+      ),
     },
     {
       title: "商品描述",
@@ -206,7 +243,7 @@ const Goods = () => {
       },
     },
     {
-      title: "商品创建时间",
+      title: "商品最新更新时间",
       dataIndex: "create_time",
       align: "center",
       key: "create_time",
@@ -281,6 +318,15 @@ const Goods = () => {
           }}
         />
       </Card>
+      <GoodsDetail
+        index={index}
+        length={tableList.total}
+        visible={drawerVisible}
+        detail={detail}
+        closeDrawer={() => setDrawerVisible(false)}
+        onPrevious={gotoBy(-1)}
+        onNext={gotoBy(1)}
+      />
     </>
   );
 };
