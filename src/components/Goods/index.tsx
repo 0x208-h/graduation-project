@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Card, Input, Form, Table, message, Button, Modal } from "antd";
+import { ShoppingOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
 import moment from "moment";
-import { queryApi, deleteApi } from "@/utils/axios";
+import { queryApi, deleteApi, putApi } from "@/utils/axios";
+import { DeleteResponse, UpdateResponse } from "@/utils/constant";
 import styles from "./index.module.scss";
 
 const { confirm } = Modal;
@@ -35,7 +37,7 @@ interface GoodsInfoList {
   goods_first_classify: string;
   price: number;
   inventory: number;
-  is_put_away: boolean;
+  is_putaway: number;
   goods_detail: string;
   create_time: string;
 }
@@ -54,6 +56,10 @@ interface GoodsInfoResponse {
 
 const Goods = () => {
   const [tableLoading, setTableLoading] = useState<boolean>(false);
+  const [deleteBtnLoading, setDeleteBtnLoading] = useState<boolean>(false);
+  const [updateStatusLoading, setUpdateStatusLoading] =
+    useState<boolean>(false);
+  const [drawerLoading, setDrawerLoading] = useState<boolean>(false);
   const [tableList, setTableList] = useState<GoodsInfoData>({
     total: 0,
     pageNum: 1,
@@ -87,6 +93,53 @@ const Goods = () => {
     fetchData({ pageNum: page.current, pageSize: page.pageSize });
   };
 
+  const handleEdit = (id: string) => {};
+
+  const showDeleteConfirm = (id: string) => {
+    confirm({
+      title: "你确定要删除该商品吗？",
+      icon: <ExclamationCircleOutlined />,
+      okText: "确定",
+      okButtonProps: { disabled: deleteBtnLoading },
+      okType: "danger",
+      cancelText: "取消",
+      async onOk() {
+        try {
+          setDeleteBtnLoading(true);
+          const res = await deleteApi<DeleteResponse>(`goods/${id}`);
+          if (res.status === 200) {
+            message.success(res.statusText, 2);
+          }
+          fetchData();
+        } catch (err) {
+          message.error("删除商品信息失败!", 2);
+        } finally {
+          setDeleteBtnLoading(false);
+        }
+      },
+    });
+  };
+
+  const handleGoodsStatus = async (id: string, status: number) => {
+    const data = {
+      id,
+      status,
+      create_time: moment().format("YYYY-MM-DD"),
+    };
+    try {
+      setUpdateStatusLoading(true);
+      const res = await putApi<UpdateResponse>(`/goods/updateStatus`, data);
+      if (res.status === 200) {
+        message.success(res.statusText, 2);
+        fetchData();
+      }
+    } catch (err) {
+      message.error("修改商品状态失败", 2);
+    } finally {
+      setUpdateStatusLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -97,6 +150,89 @@ const Goods = () => {
       dataIndex: "goods_name",
       align: "center",
       key: "goods_name",
+    },
+    {
+      title: "商品描述",
+      dataIndex: "goods_desc",
+      align: "center",
+      key: "goods_desc",
+    },
+    {
+      title: "商品一级分类",
+      dataIndex: "goods_first_classify",
+      align: "center",
+      key: "goods_first_classify",
+    },
+    {
+      title: "商品价格",
+      dataIndex: "price",
+      align: "center",
+      key: "price",
+    },
+    {
+      title: "库存",
+      dataIndex: "inventory",
+      align: "center",
+      key: "inventory",
+    },
+    {
+      title: "商品状态",
+      dataIndex: "is_putaway",
+      align: "center",
+      key: "is_putaway",
+      render: (text: string, record: GoodsInfoList) => {
+        return (
+          <>
+            <span>
+              {
+                IsPutAwayStatus.find((item) => item.code === Number(text))
+                  ?.value
+              }
+            </span>
+            <Button
+              type="link"
+              loading={updateStatusLoading}
+              onClick={() =>
+                handleGoodsStatus(record.goods_id, record.is_putaway)
+              }
+            >
+              {
+                IsPutAwayStatus.find((item) => item.code === Number(text))
+                  ?.btnValue
+              }
+            </Button>
+          </>
+        );
+      },
+    },
+    {
+      title: "商品创建时间",
+      dataIndex: "create_time",
+      align: "center",
+      key: "create_time",
+      render: (text: string) => moment(text).format("YYYY-MM-DD"),
+    },
+    {
+      title: "操作",
+      dataIndex: "operator",
+      align: "center",
+      key: "operator",
+      render: (text: string, record: GoodsInfoList) => {
+        return (
+          <>
+            <Button
+              type="primary"
+              style={{ marginRight: 8 }}
+              onClick={() => handleEdit(record.goods_id)}
+            >
+              编辑
+            </Button>
+            <Button danger onClick={() => showDeleteConfirm(record.goods_id)}>
+              删除
+            </Button>
+          </>
+        );
+      },
     },
   ];
   return (
@@ -117,7 +253,7 @@ const Goods = () => {
           <Button
             className={styles.addUserBtn}
             type="primary"
-            // icon={<UserAddOutlined />}
+            icon={<ShoppingOutlined />}
             shape="round"
             // onClick={() => {
             //   setVisible(true);
