@@ -68,9 +68,10 @@ const Home = () => {
           theme="dark"
           defaultSelectedKeys={keys.current}
           mode="inline"
-          onSelect={({ keyPath }) =>
+          onSelect={({ keyPath }) => {
+          console.log(keyPath, 'keyPath')
             sessionStorage.setItem("activePath", keyPath[0])
-          }
+          }}
         >
           <Menu.Item key="/" icon={<HomeOutlined />}>
             <Link to="">首页</Link>
@@ -78,7 +79,7 @@ const Home = () => {
           <Menu.Item key="user" icon={<UserOutlined />}>
             <Link to="user">用户管理</Link>
           </Menu.Item>
-          <SubMenu key="goods" icon={<ShopOutlined />} title="商品管理">
+          <SubMenu key="good" icon={<ShopOutlined />} title="商品管理">
           <Menu.Item key="goods">
               <Link to="goods">商品管理</Link>
             </Menu.Item>

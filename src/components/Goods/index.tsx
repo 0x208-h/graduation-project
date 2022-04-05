@@ -22,8 +22,18 @@ enum ISPUTAWAY {
 }
 
 export const IsPutAwayStatus = [
-  { code: ISPUTAWAY.SOLD_OUT, value: "已下架", btnValue: "设置上架" },
-  { code: ISPUTAWAY.PUTAWAY, value: "再售", btnValue: "设置下架" },
+  {
+    code: ISPUTAWAY.SOLD_OUT,
+    value: "已下架",
+    btnValue: "设置上架",
+    renderValue: "上架",
+  },
+  {
+    code: ISPUTAWAY.PUTAWAY,
+    value: "再售",
+    btnValue: "设置下架",
+    renderValue: "下架",
+  },
 ];
 
 interface GetAllGoodsInfo {
@@ -197,7 +207,7 @@ const Goods = () => {
       key: "goods_desc",
     },
     {
-      title: "商品一级分类",
+      title: "商品分类",
       dataIndex: "goods_first_classify",
       align: "center",
       key: "goods_first_classify",
@@ -207,6 +217,7 @@ const Goods = () => {
       dataIndex: "price",
       align: "center",
       key: "price",
+      render: (text: number) => `${text}元`,
     },
     {
       title: "库存",
