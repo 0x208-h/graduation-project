@@ -2,6 +2,7 @@ import React, { FC, useState, useEffect } from "react";
 import { Modal, Form, Input, message, Radio } from "antd";
 import moment from "moment";
 import { postApi, putApi } from "@/utils/axios";
+import { AddResponse, UpdateResponse } from "@/utils/constant";
 
 interface AddUserSubmitProps {
   username: string;
@@ -27,11 +28,6 @@ interface AddUserProps {
 }
 interface ValuesProps extends AddUserSubmitProps {
   confirmPassword?: string;
-}
-
-interface AddUserResponse {
-  status?: number;
-  statusText?: string;
 }
 
 const formItemLayout = {
@@ -67,15 +63,18 @@ const AddUser: FC<AddUserProps> = ({
     };
     try {
       setConfirmLoading(true);
-      const res = await (type === "new" ? postApi : putApi)<AddUserResponse>(
-        type === "new" ? "/user/add" : `/user/${detail.user_id}`,
-        data
-      );
+      const res = await (type === "new" ? postApi : putApi)<
+        AddResponse | UpdateResponse
+      >(type === "new" ? "/user/add" : `/user/${detail.user_id}`, data);
       if (res.status === 200) {
         message.success(res.statusText, 2);
         closeModal();
         fetchData();
         form.resetFields();
+      } else {
+        type === "new"
+          ? message.error("添加用户失败", 2)
+          : message.error("更改用户信息失败", 2);
       }
     } catch (err) {
       type === "new"

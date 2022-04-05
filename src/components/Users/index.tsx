@@ -5,6 +5,7 @@ import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
 import moment from "moment";
 import AddUser from "./AddUsers";
 import { queryApi, deleteApi } from "@/utils/axios";
+import { DeleteResponse } from "@/utils/constant";
 import styles from "./index.module.scss";
 
 const { confirm } = Modal;
@@ -49,11 +50,6 @@ interface UsersInfoResponse {
   status: number;
   pageInfo: UsersInfoData;
 }
-
-interface DeleteUserInfoResponse {
-  status: number;
-  statusText: string;
-}
 interface GetUserInfoDetailResponse {
   status: number;
   detail: UsersInfoList;
@@ -82,6 +78,8 @@ const Users = () => {
       const res = await queryApi<UsersInfoResponse>(`/user/all`, params);
       if (res.status === 200) {
         setTableList(res.pageInfo);
+      } else {
+        message.error("用户接口错误", 2);
       }
     } catch (err) {
       message.error("用户接口错误", 2);
@@ -95,6 +93,8 @@ const Users = () => {
       const res = await queryApi<GetUserInfoDetailResponse>(`user/${id}`);
       if (res.status === 200) {
         setDetail(res.detail);
+      } else {
+        message.error("获取用户信息失败", 2);
       }
     } catch (err) {
       message.error("获取用户信息失败", 2);
@@ -116,9 +116,11 @@ const Users = () => {
       async onOk() {
         try {
           setDeleteBtnLoading(true);
-          const res = await deleteApi<DeleteUserInfoResponse>(`user/${id}`);
+          const res = await deleteApi<DeleteResponse>(`user/${id}`);
           if (res.status === 200) {
             message.success(res.statusText, 2);
+          } else {
+            message.error("删除用户失败!", 2);
           }
           fetchData();
         } catch (err) {
