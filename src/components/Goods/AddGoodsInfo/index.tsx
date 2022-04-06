@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button, Form, Input, Select, message, InputNumber } from "antd";
 import moment from "moment";
 import { IsPutAwayStatus } from "../index";
-import { queryApi, postApi } from "@/utils/axios";
-import { AddResponse } from "@/utils/constant";
+import { queryApi, postApi, putApi } from "@/utils/axios";
+import { AddResponse, UpdateResponse } from "@/utils/constant";
+import { GoodsInfoList, GetGoodsInfoDetailResponse } from "../index";
 
 const { Option } = Select;
 
@@ -50,7 +51,9 @@ const classifyState = [
 const AddGoodsInfo = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const params = useParams();
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
+  // const [detail, setDetail] = useState<GoodsInfoList>({} as GoodsInfoList);
   // const [classify, setClassify] = useState<GoodsClassifyState[]>([]);
 
   // const fetchClassify = async () => {
@@ -63,6 +66,25 @@ const AddGoodsInfo = () => {
   //     message.error("获取商品一级分类失败", 2);
   //   }
   // };
+
+  const fetchData = async (id?: string) => {
+    try {
+      const res = await queryApi<GetGoodsInfoDetailResponse>(`goods/${id}`);
+      if (res.status === 200) {
+        form.setFieldsValue(res.detail);
+      }
+    } catch (err) {
+      message.error("获取当前商品信息失败", 2);
+    }
+  };
+
+  useEffect(() => {
+    if (params.id) fetchData(params?.id);
+    return () => {
+      form.resetFields();
+    };
+  }, [params?.id]);
+
   const handleSubmit = async (values: SubmitDataProps) => {
     try {
       setSubmitLoading(true);
@@ -70,20 +92,21 @@ const AddGoodsInfo = () => {
         ...values,
         create_time: moment().format("YYYY-MM-DD"),
       };
-      const res = await postApi<AddResponse>("/goods/add", data);
+      const res = await (params?.id ? putApi : postApi)<
+        AddResponse | UpdateResponse
+      >(params?.id ? `/goods/update/${params?.id}` : "/goods/add", data);
       if (res.status === 200) {
         message.success(res.statusText, 2);
-        navigate("/home/goods");
+        navigate("/home/goods/list");
       }
     } catch (err) {
-      message.error("添加商品失败!", 2);
+      params?.id
+        ? message.error("更新商品失败!", 2)
+        : message.error("添加商品失败!", 2);
     } finally {
       setSubmitLoading(false);
     }
   };
-  useEffect(() => {
-    // fetchClassify()
-  }, []);
   return (
     <Form
       {...formItemLayout}
@@ -114,7 +137,11 @@ const AddGoodsInfo = () => {
       >
         <Select allowClear>
           {classifyState?.map((item) => {
-            return <Option key={item.value}>{item.value}</Option>;
+            return (
+              <Option key={item.value} value={item.code}>
+                {item.value}
+              </Option>
+            );
           })}
         </Select>
       </Form.Item>
@@ -142,7 +169,11 @@ const AddGoodsInfo = () => {
       >
         <Select>
           {IsPutAwayStatus.map((item) => {
-            return <Option key={item.code}>{item.renderValue}</Option>;
+            return (
+              <Option key={item.code} value={item.code}>
+                {item.renderValue}
+              </Option>
+            );
           })}
         </Select>
       </Form.Item>

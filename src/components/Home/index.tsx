@@ -69,8 +69,8 @@ const Home = () => {
           defaultSelectedKeys={keys.current}
           mode="inline"
           onSelect={({ keyPath }) => {
-          console.log(keyPath, 'keyPath')
-            sessionStorage.setItem("activePath", keyPath[0])
+            console.log(keyPath, "keyPath");
+            sessionStorage.setItem("activePath", keyPath[0]);
           }}
         >
           <Menu.Item key="/" icon={<HomeOutlined />}>
@@ -79,9 +79,9 @@ const Home = () => {
           <Menu.Item key="user" icon={<UserOutlined />}>
             <Link to="user">用户管理</Link>
           </Menu.Item>
-          <SubMenu key="good" icon={<ShopOutlined />} title="商品管理">
-          <Menu.Item key="goods">
-              <Link to="goods">商品管理</Link>
+          <SubMenu key="goods" icon={<ShopOutlined />} title="商品管理">
+            <Menu.Item key="goods/list">
+              <Link to="goods/list">商品管理</Link>
             </Menu.Item>
             <Menu.Item key="goods/add">
               <Link to="goods/add">添加商品</Link>
@@ -113,8 +113,9 @@ const Home = () => {
             <Suspense fallback={null}>
               <Routes>
                 <Route path="/welcome" element={<Welcome />} />
-                <Route path="/goods" element={<Goods />} />
+                <Route path="/goods/list" element={<Goods />} />
                 <Route path="/goods/add" element={<AddGoodsInfo />} />
+                <Route path="/goods/edit/:id" element={<AddGoodsInfo />} />
                 <Route path="/user" element={<Users />} />
                 <Route path="/order" element={<Order />} />
                 <Route path="*" element={<Navigate to="welcome" />} />

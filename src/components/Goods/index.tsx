@@ -54,7 +54,7 @@ export interface GoodsInfoList {
   create_time: string;
 }
 
-interface GetGoodsInfoDetailResponse {
+export interface GetGoodsInfoDetailResponse {
   status: number;
   detail: GoodsInfoList;
 }
@@ -113,7 +113,7 @@ const Goods = () => {
     fetchData({ pageNum: page.current, pageSize: page.pageSize });
   };
 
-  const handleEdit = (id: string) => {};
+  // const handleEdit = (id: string) => {};
 
   const getGoodsDetail = async (id: string) => {
     try {
@@ -273,7 +273,9 @@ const Goods = () => {
             <Button
               type="primary"
               style={{ marginRight: 8 }}
-              onClick={() => handleEdit(record.goods_id)}
+              onClick={() => {
+                navigate(`/home/goods/edit/${record.goods_id}`);
+              }}
             >
               编辑
             </Button>
@@ -307,6 +309,7 @@ const Goods = () => {
             shape="round"
             onClick={() => {
               navigate("/home/goods/add");
+              sessionStorage.setItem("activePath", "goods/add");
             }}
           >
             新增商品

@@ -31,7 +31,7 @@ const GoodsDetail: FC<drawerVisible> = ({
       width={600}
       extra={
         <Space>
-          <Button type="primary" disabled={index === 0} onClick={onPrevious}>
+          <Button disabled={index === 0} onClick={onPrevious}>
             上一个
           </Button>
           <Button disabled={index === length - 1} onClick={onNext}>
