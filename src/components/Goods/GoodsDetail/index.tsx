@@ -3,7 +3,7 @@ import { Button, Drawer, Space, Row, Col } from "antd";
 import moment from "moment";
 import { GoodsInfoList, IsPutAwayStatus } from "../index";
 
-interface drawerVisible {
+interface GoodsDetailProps {
   index: number;
   length: number;
   visible: boolean;
@@ -13,7 +13,7 @@ interface drawerVisible {
   onNext?: () => void;
 }
 
-const GoodsDetail: FC<drawerVisible> = ({
+const GoodsDetail: FC<GoodsDetailProps> = ({
   index,
   length,
   visible,
