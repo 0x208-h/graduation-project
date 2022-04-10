@@ -1,0 +1,24 @@
+.container {
+  background: white;
+  padding: 0px 24px;
+  flex: 1;
+  // 添加min-width以让浏览器做缩放依据，从而解决flex布局下table的问题
+  min-width: 0px;
+  border-radius: 2px;
+
+  .titleWrapper {
+    height: 56px;
+    border-bottom: solid 1px #ededed;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+  }
+  & + .container {
+    margin-left: 16px;
+  }
+}
