@@ -97,11 +97,34 @@ const OrdersDetail: FC<OrdersDetailProps> = ({
         </Col>
       </Row>
       <h5>商品基本信息</h5>
-      <Table rowKey="order_detail_id" dataSource={detail?.detail}>
-        <Table.Column title="商品名称" dataIndex="order_name" align="center" key="order_name" />
-        <Table.Column title="商品数量" dataIndex="count" align="center" key="count" />
-        <Table.Column title="商品单价" dataIndex="price" align="center" key="price" />
-        <Table.Column title="商品总价" dataIndex="total" align="center" key="total" />
+      <Table
+        rowKey="order_detail_id"
+        dataSource={detail?.detail?.length > 0 ? detail.detail : []}
+      >
+        <Table.Column
+          title="商品名称"
+          dataIndex="order_name"
+          align="center"
+          key="order_name"
+        />
+        <Table.Column
+          title="商品数量"
+          dataIndex="count"
+          align="center"
+          key="count"
+        />
+        <Table.Column
+          title="商品单价"
+          dataIndex="price"
+          align="center"
+          key="price"
+        />
+        <Table.Column
+          title="商品总价"
+          dataIndex="total"
+          align="center"
+          key="total"
+        />
       </Table>
     </Drawer>
   );
