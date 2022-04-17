@@ -103,9 +103,9 @@ const OrdersDetail: FC<OrdersDetailProps> = ({
       >
         <Table.Column
           title="商品名称"
-          dataIndex="order_name"
+          dataIndex="goods_name"
           align="center"
-          key="order_name"
+          key="goods_name"
         />
         <Table.Column
           title="商品数量"

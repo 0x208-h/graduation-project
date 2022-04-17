@@ -48,7 +48,7 @@ interface OrdersInfoResponse {
 
 interface OrdersDetailList {
   order_detail_id: string;
-  order_name: string;
+  goods_name: string;
   price: number;
   count: number;
   total: number;
