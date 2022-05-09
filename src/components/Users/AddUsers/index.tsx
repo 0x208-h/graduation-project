@@ -71,6 +71,8 @@ const AddUser: FC<AddUserProps> = ({
         closeModal();
         fetchData();
         form.resetFields();
+      } else {
+        message.error(res.statusText, 2);
       }
     } catch (err) {
       type === "new"
@@ -117,11 +119,22 @@ const AddUser: FC<AddUserProps> = ({
           label="性别"
           name="sex"
           hasFeedback
-          rules={[{ required: true, message: "请输入你的性别!" }]}
+          rules={[{ required: true, message: "请选择你的性别!" }]}
         >
           <Radio.Group>
             <Radio value={1}>男</Radio>
             <Radio value={0}>女</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item
+          label="权限"
+          name="is_permission"
+          hasFeedback
+          rules={[{ required: true, message: "请选择用户权限!" }]}
+        >
+          <Radio.Group>
+            <Radio value={1}>系统管理员</Radio>
+            <Radio value={0}>一般用户</Radio>
           </Radio.Group>
         </Form.Item>
         <Form.Item

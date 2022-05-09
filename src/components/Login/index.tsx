@@ -26,11 +26,13 @@ const Login = () => {
       username: values.username,
       password: values.password,
     });
+    console.log(result, "result");
     const res = result.data.data;
     console.log(res, "res");
     if (res && res.statusText === "success") {
       sessionStorage.setItem("token", `Bearer ${res.token}`);
       sessionStorage.setItem("username", res.username);
+      sessionStorage.setItem('permission', res.is_permission);
       message.success(res.message, 2);
       navigate("/home/welcome");
     }

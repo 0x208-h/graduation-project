@@ -4,7 +4,7 @@ import { UserAddOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { ColumnProps, TablePaginationConfig } from "antd/lib/table";
 import moment from "moment";
 import AddUser from "./AddUsers";
-import { queryApi, deleteApi } from "@/utils/axios";
+import { queryApi, deleteApi, putApi } from "@/utils/axios";
 import { DeleteResponse } from "@/utils/constant";
 import styles from "./index.module.scss";
 
@@ -39,6 +39,7 @@ interface UsersInfoList {
   phone: string;
   email: string;
   sex: number;
+  is_permission: number;
 }
 interface UsersInfoData {
   total: number;
@@ -60,7 +61,8 @@ const Users = () => {
   const [visible, setVisible] = useState<boolean>(false);
   const [deleteBtnLoading, setDeleteBtnLoading] = useState<boolean>(false);
   const [type, setType] = useState<"new" | "edit">("new");
-  const [id, setId] = useState<string>("");
+  // const [id, setId] = useState<string>("");
+  const [updateBtnLoading, setUpdateBtnLoading] = useState<boolean>(false);
   const [detail, setDetail] = useState<UsersInfoList>({} as UsersInfoList);
   const [tableList, setTableList] = useState<UsersInfoData>({
     total: 0,
@@ -68,6 +70,7 @@ const Users = () => {
     pageSize: 10,
     list: [],
   });
+  const permission = sessionStorage.getItem("permission");
   const fetchData = async (data?: GetAllUsersInfo) => {
     const params = {
       ...initialValue,
@@ -86,20 +89,20 @@ const Users = () => {
     }
   };
 
-  const getUserInfoDetail = async () => {
+  const getUserInfoDetail = async (id: string) => {
     try {
       const res = await queryApi<GetUserInfoDetailResponse>(`user/${id}`);
       if (res.status === 200) {
         setDetail(res.detail);
-      } 
+      }
     } catch (err) {
       message.error("获取用户信息失败", 2);
     }
   };
 
-  useEffect(() => {
-    if (id) getUserInfoDetail();
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) getUserInfoDetail();
+  // }, [id]);
 
   const showDeleteConfirm = (id: string) => {
     confirm({
@@ -115,7 +118,7 @@ const Users = () => {
           const res = await deleteApi<DeleteResponse>(`user/${id}`);
           if (res.status === 200) {
             message.success(res.statusText, 2);
-          } 
+          }
           fetchData();
         } catch (err) {
           message.error("删除用户失败!", 2);
@@ -126,8 +129,36 @@ const Users = () => {
     });
   };
 
+  const showUpdateConfirm = (id: string, permission: number) => {
+    confirm({
+      title: "你确定要修改该用户的权限吗？",
+      icon: <ExclamationCircleOutlined />,
+      okText: "确定",
+      okButtonProps: { disabled: updateBtnLoading },
+      okType: "danger",
+      cancelText: "取消",
+      async onOk() {
+        try {
+          setUpdateBtnLoading(true);
+          const res = await putApi<DeleteResponse>(`user/permission/${id}`, {
+            permission,
+          });
+          if (res.status === 200) {
+            message.success(res.statusText, 2);
+          }
+          fetchData();
+        } catch (err) {
+          message.error("修改用户权限失败!", 2);
+        } finally {
+          setUpdateBtnLoading(false);
+        }
+      },
+    });
+  };
+
   const handleEdit = (id: string) => {
-    setId(id);
+    // setId(id);
+    getUserInfoDetail(id);
     setType("edit");
     setVisible(true);
   };
@@ -173,6 +204,27 @@ const Users = () => {
       render: (text: string) => moment(text).format("YYYY-MM-DD"),
     },
     {
+      title: "修改权限",
+      dataIndex: "is_permission",
+      align: "center",
+      key: "is_permission",
+      render: (text: number, record: UsersInfoList) => {
+        return (
+          <Button
+            disabled={
+              Number(permission) === 0 ||
+              sessionStorage.getItem("username") === record.username
+            }
+            onClick={() =>
+              showUpdateConfirm(record.user_id, record.is_permission)
+            }
+          >{`${
+            text === 0 ? "修改权限为管理员" : "修改权限为一般用户"
+          }`}</Button>
+        );
+      },
+    },
+    {
       title: "操作",
       dataIndex: "operator",
       align: "center",
@@ -184,10 +236,15 @@ const Users = () => {
               type="primary"
               style={{ marginRight: 8 }}
               onClick={() => handleEdit(record.user_id)}
+              disabled={Number(permission) === 0}
             >
               编辑
             </Button>
-            <Button danger onClick={() => showDeleteConfirm(record.user_id)}>
+            <Button
+              danger
+              onClick={() => showDeleteConfirm(record.user_id)}
+              disabled={Number(permission) === 0}
+            >
               删除
             </Button>
           </>
@@ -226,6 +283,7 @@ const Users = () => {
             type="primary"
             icon={<UserAddOutlined />}
             shape="round"
+            disabled={Number(permission) === 0}
             onClick={() => {
               setVisible(true);
               setType("new");

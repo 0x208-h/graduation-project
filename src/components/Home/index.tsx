@@ -43,10 +43,12 @@ const Home = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const onCollapse = () => setCollapsed(!collapsed);
+  const permission = sessionStorage.getItem("permission");
   const handleEit = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("username");
     sessionStorage.removeItem("activePath");
+    sessionStorage.removeItem("permission");
     message.success("退出登录成功", 2);
     navigate("/login");
   };
@@ -83,7 +85,7 @@ const Home = () => {
             <Menu.Item key="goods/list">
               <Link to="goods/list">商品管理</Link>
             </Menu.Item>
-            <Menu.Item key="goods/add">
+            <Menu.Item key="goods/add" disabled={Number(permission) === 0}>
               <Link to="goods/add">添加商品</Link>
             </Menu.Item>
           </SubMenu>

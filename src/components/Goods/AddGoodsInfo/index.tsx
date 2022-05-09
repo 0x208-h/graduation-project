@@ -98,6 +98,8 @@ const AddGoodsInfo = () => {
       if (res.status === 200) {
         message.success(res.statusText, 2);
         navigate("/home/goods/list");
+      } else {
+        message.error(res.statusText, 2)
       }
     } catch (err) {
       params?.id
