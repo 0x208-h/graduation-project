@@ -13,6 +13,7 @@ import {
   UserOutlined,
   HomeOutlined,
   UnorderedListOutlined,
+  ContactsOutlined,
 } from "@ant-design/icons";
 import styles from "./index.module.scss";
 const Users = lazy(
@@ -34,6 +35,10 @@ const AddGoodsInfo = lazy(
     )
 );
 
+const Provider = lazy(
+  () => import(/*WebpackChunkName: Provider*/ "@/components/Provider")
+);
+
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -43,7 +48,6 @@ const Home = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   const onCollapse = () => setCollapsed(!collapsed);
-  const permission = sessionStorage.getItem("permission");
   const handleEit = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("username");
@@ -64,7 +68,7 @@ const Home = () => {
           className={styles.logo}
           style={{ background: !collapsed ? "#eff2f5" : "black" }}
         >
-          {!collapsed ? "电商平台管理系统" : ""}
+          {!collapsed ? "电商后台管理系统" : ""}
         </div>
         <Menu
           theme="dark"
@@ -85,13 +89,16 @@ const Home = () => {
             <Menu.Item key="goods/list">
               <Link to="goods/list">商品管理</Link>
             </Menu.Item>
-            <Menu.Item key="goods/add" disabled={Number(permission) === 0}>
+            <Menu.Item key="goods/add">
               <Link to="goods/add">添加商品</Link>
             </Menu.Item>
           </SubMenu>
 
           <Menu.Item key="order" icon={<UnorderedListOutlined />}>
             <Link to="order">订单管理</Link>
+          </Menu.Item>
+          <Menu.Item key="provider" icon={<ContactsOutlined />}>
+            <Link to="provider">商户管理</Link>
           </Menu.Item>
         </Menu>
       </Sider>
@@ -120,6 +127,7 @@ const Home = () => {
                 <Route path="/goods/edit/:id" element={<AddGoodsInfo />} />
                 <Route path="/user" element={<Users />} />
                 <Route path="/order" element={<Order />} />
+                <Route path="/provider" element={<Provider />} />
                 <Route path="*" element={<Navigate to="welcome" />} />
               </Routes>
             </Suspense>

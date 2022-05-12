@@ -3,25 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import axios from "axios";
 import { baseURL } from "@/utils/constant";
-import { postApi } from "@/utils/axios";
 import styles from "./index.module.scss";
-
-interface LoginResponse {
-  token?: string;
-  message?: string;
-  username: string;
-  status?: number;
-  statusText?: "success" | "fail";
-}
 
 const Login = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    // const res = await postApi<LoginResponse>("/user/login", {
-    //   username: values.username,
-    //   password: values.password,
-    // });
     const result = await axios.post(`${baseURL}/user/login`, {
       username: values.username,
       password: values.password,

@@ -19,11 +19,11 @@ const axiosConfig = {
 const axiosInstance = axios.create(axiosConfig);
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log(response, "--> response: ");
     if (response.status === 200) {
       const res = response.data || response;
       return res;
-    }
-    if (response.status === 401) {
+    } else if (response.status === 401) {
       sessionStorage.removeItem("token");
       window.location.href = `${window.location.origin}/login`;
     }
@@ -40,7 +40,10 @@ export function queryApi<T>(url: string, query?: any): Promise<T> {
     url,
     params: queryClean(query),
   })
-    .then((res) => res.data)
+    .then((res) => {
+      console.log(res.data, "data");
+      return res.data;
+    })
     .catch();
 }
 

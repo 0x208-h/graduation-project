@@ -86,7 +86,6 @@ const Goods = () => {
     pageSize: 10,
     list: [],
   });
-  const permission = sessionStorage.getItem("permission");
 
   const fetchData = async (data?: GetAllGoodsInfo) => {
     const params = {
@@ -274,18 +273,13 @@ const Goods = () => {
             <Button
               type="primary"
               style={{ marginRight: 8 }}
-              disabled={Number(permission) === 0}
               onClick={() => {
                 navigate(`/home/goods/edit/${record.goods_id}`);
               }}
             >
               编辑
             </Button>
-            <Button
-              danger
-              disabled={Number(permission) === 0}
-              onClick={() => showDeleteConfirm(record.goods_id)}
-            >
+            <Button danger onClick={() => showDeleteConfirm(record.goods_id)}>
               删除
             </Button>
           </>
@@ -313,7 +307,6 @@ const Goods = () => {
             type="primary"
             icon={<ShoppingOutlined />}
             shape="round"
-            disabled={Number(permission) === 0}
             onClick={() => {
               navigate("/home/goods/add");
               sessionStorage.setItem("activePath", "goods/add");
